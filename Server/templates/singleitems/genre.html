@@ -1,0 +1,118 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!--  Example of a table with clickable rows:
+        <table class="styled">
+                    <thead>
+                        <tr>
+                            <td>Column 1 Heading - Usually an ID </td>
+                            <td>Column 2 Heading</td>
+                                      .
+                                      .
+                                      .
+                            <td>Column n Heading</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for instance in some_input_array %}
+                        <tr class="clickable-tr" data-href="{{ url_for('single_item_target', target_id=instance.single_item_target_id)}}">
+                            <td style="text-align: center">{{ instance.single_item_target_id }}</td>
+                            <td>{{instance.item_corresponding_to_column_2}}</td>
+                                      .
+                                      .
+                                      .
+                            <td>{{instance.item_corresponding_to_column_n}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+        
+                </table>
+        -->
+        <!-- TODO Query (10) -->
+        <!-- First check should be a valid instance -->
+        <!-- Second check should be what type of genre? -->
+        {% if output_data | length > 0 %}
+            {% if genre_type == "1" %}
+            <h2 class="title"> Genre: {{genre}}</h2>
+                    <table class="styled">
+                        <thead>
+                            <tr>
+                                <td>Song ID</td>
+                                <td>Song Name</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for instance in output_data %}
+                            <tr class="clickable-tr" data-href="/song/{{instance.song_id}}">
+                                <td>{{instance.song_id}}</td>
+                                <td>{{instance.song_title}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+            {% if genre_type == "2" %}
+            <h2 class="title"> Genre: {{genre}}</h2>
+                    <table class="styled">
+                        <thead>
+                            <tr>
+                                <td>TV Show ID</td>
+                                <td>TV Show Title</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for instance in output_data %}
+                                {% if instance.item_type == "TVShow" %}
+                                    <tr class="clickable-tr" data-href="/tvshow/{{instance.movie_id}}">
+                                        <td>{{instance.movie_id}}</td>
+                                        <td>{{instance.movie_title}}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <table class="styled">
+                        <thead>
+                            <tr>
+                                <td>Movie ID</td>
+                                <td>Movie Title</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for instance in output_data %}
+                                {% if instance.item_type == "Movie" %}
+                                    <tr class="clickable-tr" data-href="/movie/{{instance.movie_id}}">
+                                        <td>{{instance.movie_id}}</td>
+                                        <td>{{instance.movie_title}}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table></br>
+            {% endif %}
+            {% if genre_type == "6" %}
+            <h2 class="title"> Genre: {{genre}}</h2>
+                    <table class="styled">
+                        <thead>
+                            <tr>
+                                <td>Podcast ID</td>
+                                <td>Podcast Title</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for instance in output_data %}
+                            <tr class="clickable-tr" data-href="/podcast/{{instance.podcast_id}}">
+                                <td>{{instance.podcast_id }}</td>
+                                <td>{{instance.podcast_title}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+    {% else %}
+            <h2 class="title"> Invalid Genre ID</h2>
+    {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}

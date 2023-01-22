@@ -1,0 +1,76 @@
+{% include 'top.html' %}
+<meta name="somedata" content="{{progress}}" />
+<meta name="urldata" content="/podcastep/{{podcastep[0]['media_id']}}" />
+
+<div class="content">
+    <div class="container details">
+        <!-- TODO Query (7)
+        Display All Relevant Podcast Episode Infromation including meta data
+        -->
+        {% if podcastep | length > 0 %}
+        <h2 class="title"> {{podcastep[0].podcast_episode_title}} - published on
+            {{podcastep[0].podcast_episode_published_date}} </h2>
+        <br />
+        <h3> Length - {{podcastep[0].podcast_episode_length}} seconds </h2>
+            <br />
+            <div>
+                <audio controls id="myaudio" preload="auto">
+                    <source src="{{podcastep[0].podcast_episode_uri}}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+                <script>
+                    myAudio = document.getElementById('myaudio');
+                    var data1 = document.getElementsByName('somedata')[0].content;
+                    var data2 = document.getElementsByName('urldata')[0].content;
+                    function setTime() {
+                        this.currentTime = data1;
+                        myAudio.removeEventListener('canplay', setTime);
+                    };
+
+                    function readtime() {
+                        console.log(myaudio.currentTime);
+                    };
+                    myAudio.addEventListener('canplay', setTime);
+                    myAudio.addEventListener('pause', readtime);
+
+
+                    window.onbeforeunload = function () {
+                        console.log(myaudio.currentTime);
+                        $.post(data2, // url
+                        {
+                            progress: myaudio.currentTime
+                        }, // data to be submit
+                        function (data, status, jqXHR) { // success callback
+                            $('p').append('status: ' + status + ', data: ' + data);
+                        })
+                    };
+                    
+                </script>
+            </div>
+            <h3> Description </h3>
+            {% for instance in podcastep %}
+            {% if instance.md_type_name == 'description' %}
+            <div>
+                {{instance.md_value}}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <h3> Artworks </h3>
+            {% for instance in podcastep %}
+            {% if instance.md_type_name == 'artwork' %}
+            <img src="{{instance.md_value}}" alt="image">
+            <br />© Amazon Public Domain 2019.
+            {% endif %}
+            {% endfor %}
+            <br />
+
+            {% else %}
+            <h2 class="title"> Invalid Podcast Ep ID</h2>
+            {% endif %}
+            <!-- TODO - Query (10)
+        You will have to modify the above approach slightly to make each genre clickable
+        -->
+    </div>
+</div>
+{% include 'bottom.html'%}

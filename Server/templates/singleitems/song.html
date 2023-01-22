@@ -1,0 +1,79 @@
+<meta name="somedata" content="{{progress}}" />
+<meta name="urldata" content="/song/{{song[0]['song_id']}}" />
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!-- Check if We have a valid song -->
+        {% if song | length > 0 %}
+            <h2 class="title"> {{song[0].song_title}} by {{song[0].artists}}</h2>
+            <br/>
+            Song is {{song[0].length}} seconds long.
+            <hr/>
+            <h3> Artworks </h3>
+            {% for instance in songmetadata %}
+                {% if instance.md_type_name == 'artwork' %}
+                    <img src="{{instance.md_value}}" alt="image">
+                    <br/>© Spotify Public Domain 2019.
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <div>
+                <audio controls id="myaudio" preload="auto">
+                    <source src="{{location[0].storage_location}}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+                <script>
+                    myAudio = document.getElementById('myaudio');
+                    var data1 = document.getElementsByName('somedata')[0].content;
+                    var data2 = document.getElementsByName('urldata')[0].content;
+                    function setTime() {
+                        this.currentTime = data1;
+                        myAudio.removeEventListener('canplay', setTime);
+                    };
+
+                    function readtime() {
+                        console.log(myaudio.currentTime);
+                    };
+                    myAudio.addEventListener('canplay', setTime);
+                    myAudio.addEventListener('pause', readtime);
+
+
+                    window.onbeforeunload = function () {
+                        console.log(myaudio.currentTime);
+                        $.post(data2, // url
+                        {
+                            progress: myaudio.currentTime
+                        }, // data to be submit
+                        function (data, status, jqXHR) { // success callback
+                            $('p').append('status: ' + status + ', data: ' + data);
+                        })
+                    };
+                    
+                </script>
+            </div>
+            <h3> Descriptions </h3>
+            {% for instance in songmetadata %}
+                {% if instance.md_type_name == 'description' %}
+                    <div>
+                        {{instance.md_value}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <!-- TODO - Query 10
+            You will have to modify the approach below slightly to make each genre clickable
+            -->
+            <h3> Genres </h3>
+            {% for instance in songmetadata %}
+                {% if instance.md_type_name == 'song genre' %}
+                    <div>
+                        <a href="/genre/{{instance.md_id}}">{{instance.md_value}}</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <h2 class="title"> Invalid Song ID</h2>
+        {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}
